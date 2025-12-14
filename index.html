@@ -1,12 +1,19 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lan
+g="pt-BR">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Sopa de Letras — Falange Presets (A4 300 DPI + PNG)</title>
   <style>
     body{font-family:system-ui,Arial,sans-serif;margin:16px;background:#f6f7fb}
-    .wrap{display:grid;gap:12px;grid-template-columns:390px 1fr;align-items:start}
+    .wrap{
+  display:grid;
+  gap:16px;
+  grid-template-columns:420px 1fr;
+  align-items:start;
+}
+
     @media(max-width:980px){.wrap{grid-template-columns:1fr}}
     .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px;box-shadow:0 8px 30px rgba(0,0,0,.06)}
     label{font-size:12px;color:#374151;display:block;margin:10px 0 6px}
@@ -19,17 +26,104 @@
     .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
     .hint{font-size:12px;color:#6b7280;line-height:1.35}
     .pill{display:inline-block;padding:4px 10px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe;font-size:12px}
-    canvas{width:100%;height:auto;background:#fff;border-radius:14px;border:1px solid #e5e7eb}
+    .card canvas{
+  max-width:100%;
+  display:block;
+  margin:0 auto;
+}
+
     .log{white-space:pre-wrap;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:#0b1220;color:#dbeafe;padding:10px;border-radius:12px}
     .small{font-size:12px;color:#374151}
+.cabecalho{
+  background:#ffffff;
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:14px;
+}
+
+.cabecalho .linha{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+  margin-bottom:10px;
+}
+
+.cabecalho .linha3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+
+.cabecalho input{
+  border:1px solid #d1d5db;
+  border-radius:8px;
+  padding:8px;
+  font-size:14px;
+}
+
+
   </style>
 </head>
 <body>
   <h2 style="margin:0 0 10px;">Sopa de Letras — Presets Falange (HTML → PNG)</h2>
 
   <div class="wrap">
-    <div class="card">
-      <div class="pill">Um HTML • 5 estilos • PNG limpa + gabarito</div>
+<div class="colLeft">
+
+  
+<!-- CABEÇALHO -->
+ <div class="cabecalho">
+
+  <div class="linha">
+    <strong>Escola:</strong>
+    <input id="escola" type="text" placeholder="Ex.: Escola X" />
+  </div>
+
+  <div class="linha">
+    <strong>Professor:</strong>
+    <input id="professor" type="text" placeholder="Ex.: Professor X" />
+  </div>
+
+  <div class="linha">
+    <strong>Disciplina:</strong>
+    <input id="disciplina" type="text" placeholder="Ex.: Espanhol" />
+  </div>
+
+  <div class="linha linha3">
+    <div>
+      <strong>Aluno:</strong>
+      <input id="aluno" type="text" placeholder="Nome do aluno" />
+    </div>
+
+    <div>
+      <strong>Turma:</strong>
+      <input id="turma" type="text" placeholder="Ex.: 7ºA" />
+    </div>
+
+    <div>
+      <strong>Data:</strong>
+      <input id="data" type="text" placeholder="__/__/____" />
+    </div>
+  </div>
+
+<label style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+  <input type="checkbox" id="usarCabecalho" checked>
+  Incluir cabeçalho no PNG
+</label>
+
+
+</div>
+
+
+  <!-- CARD / CONTEÚDO -->
+  <div class="card">
+
+    <div class="pill">
+      Um HTML • 5 estilos • PNG limpa + gabarito
+    </div>
+
+    <!-- aqui continua TODO o conteúdo original da sopa -->
+
 
       <label>Preset Falange</label>
       <select id="preset">
@@ -87,6 +181,11 @@
           <input id="footer" placeholder="Ex.: BNCC: EFxxLPxx — Tema: Animais" value="BNCC: (ajuste ao tema) — Falange Educación Lúdica" />
         </div>
       </div>
+<label style="margin-top:8px;display:flex;gap:8px;align-items:center;">
+  <input type="checkbox" id="usarBNCC" checked>
+  Incluir BNCC no PNG
+</label>
+
 
       <label>Lista de palavras (1 por linha)</label>
       <textarea id="words">VENTANA
@@ -120,12 +219,20 @@ PAÑUELO</textarea>
         <button id="pngCleanBtn" class="secondary" disabled>Baixar PNG limpa</button>
         <button id="pngKeyBtn" class="secondary" disabled>Baixar PNG gabarito</button>
       </div>
+<div style="height:10px;"></div>
+<div class="row">
+  <button id="pdfCleanBtn" class="secondary" disabled>Baixar PDF limpa</button>
+  <button id="pdfKeyBtn" class="secondary" disabled>Baixar PDF gabarito</button>
+</div>
 
       <div style="height:10px;"></div>
       <div class="small">Log:</div>
       <div id="log" class="log">Aguardando…</div>
     </div>
+</div>
 
+<div class="colRight">
+<!-- COLUNA B (DIREITA): PRÉVIA -->
     <div class="card">
       <div class="pill">Prévia</div>
       <canvas id="canvas" width="2480" height="3508"></canvas>
@@ -134,6 +241,7 @@ PAÑUELO</textarea>
       </div>
     </div>
   </div>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <script>
 (() => {
@@ -267,6 +375,9 @@ PAÑUELO</textarea>
       ctx.fillRect(0,0,canvas.width,canvas.height);
       return;
     }
+    
+    
+
     // checkered
     const size = Math.max(18, Math.floor(Math.min(canvas.width, canvas.height) * theme.background.sizeRatio));
     for (let y = 0; y < canvas.height; y += size){
@@ -279,44 +390,78 @@ PAÑUELO</textarea>
   }
 
   // ===== Render Falange =====
+
   function renderFalange(grid, solutionPaths, withKey, theme, opts){
-    const rows = grid.length, cols = grid[0].length;
+  const rows = grid.length, cols = grid[0].length;
 
-    // Reservas
-    const outer = opts.outer;
-    const footerH = opts.footerText ? Math.max(90, Math.floor(Math.min(canvas.width, canvas.height) * 0.03)) : 0;
-    const numbersOn = opts.numbersOn;
-    const numberPad = numbersOn ? Math.max(90, Math.floor(Math.min(canvas.width, canvas.height) * 0.03)) : 0;
+  // Reservas
+  const outer = opts.outer;
 
-    // Área do grid (deixa espaço para numeração/topo e rodapé)
-    const startX = outer + numberPad;
-    const startY = outer + numberPad;
-    const gridW = canvas.width - 2*outer - numberPad;
-    const gridH = canvas.height - 2*outer - numberPad - footerH;
+  // ===== CABEÇALHO (PNG) — lê os campos da tela =====
+  const escola = (document.getElementById("escola")?.value || "").trim();
+  const professor = (document.getElementById("professor")?.value || "").trim();
+  const disciplina = (document.getElementById("disciplina")?.value || "").trim();
+  const aluno = (document.getElementById("aluno")?.value || "").trim();
+  const turma = (document.getElementById("turma")?.value || "").trim();
+  const dataTxt = (document.getElementById("data")?.value || "").trim();
 
-    if (gridW <= 50 || gridH <= 50) {
-      throw new Error("Canvas pequeno demais para a margem/numeração/rodapé. Reduza margem ou aumente o tamanho.");
-    }
+  // Só cria área de cabeçalho se tiver algo preenchido
+  const usarCabecalho = document.getElementById("usarCabecalho")?.checked;
+const hasHeader = usarCabecalho;
+  const headerH = hasHeader ? Math.max(160, Math.floor(canvas.height * 0.10)) : 0;
 
-    const cellW = gridW / cols;
-    const cellH = gridH / rows;
+  const footerH = opts.footerText ? Math.max(90, Math.floor(Math.min(canvas.width, canvas.height) * 0.03)) : 0;
+  const numbersOn = opts.numbersOn;
+  const numberPad = numbersOn ? Math.max(90, Math.floor(Math.min(canvas.width, canvas.height) * 0.03)) : 0;
 
-    // fundo
-    drawBackground(theme);
+  // Área do grid (AGORA com headerH)
+  const startX = outer + numberPad;
+  const startY = outer + numberPad + headerH;
+  const gridW = canvas.width - 2*outer - numberPad;
+  const gridH = canvas.height - 2*outer - numberPad - footerH - headerH;
 
-    // gabarito (fundo nas células)
-    if (withKey){
-      ctx.save();
-      ctx.fillStyle = theme.key.fill;
-      for (const path of solutionPaths){
-        for (const [rr, cc] of path){
-          const x = startX + cc*cellW;
-          const y = startY + rr*cellH;
-          ctx.fillRect(x+2, y+2, cellW-4, cellH-4);
-        }
-      }
-      ctx.restore();
-    }
+  if (gridW <= 50 || gridH <= 50) {
+    throw new Error("Canvas pequeno demais para cabeçalho/margem/numeração/rodapé. Aumente o tamanho do PNG ou reduza margens.");
+  }
+
+  const cellW = gridW / cols;
+  const cellH = gridH / rows;
+
+  // fundo primeiro
+  drawBackground(theme);
+
+  // ===== DESENHA CABEÇALHO NO PNG =====
+  if (hasHeader){
+    ctx.save();
+    ctx.fillStyle = theme.footer.color;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+
+    const t1 = Math.max(26, Math.floor(canvas.height * 0.018)); // fonte principal
+    const t2 = Math.max(22, Math.floor(canvas.height * 0.016)); // fonte menor
+
+    let y = outer;
+    ctx.font = `800 ${t1}px system-ui, Arial`;
+
+    ctx.fillText(`Escola: ${escola || "________________________"}`, outer, y); y += t1 + 10;
+ctx.fillText(`Professor: ${professor || "________________________"}`, outer, y); y += t1 + 10;
+ctx.fillText(`Disciplina: ${disciplina || "________________________"}`, outer, y); y += t1 + 10;
+
+
+    ctx.font = `700 ${t2}px system-ui, Arial`;
+    const linhaAluno =
+  `Aluno: ${aluno || "____________"}   ` +
+  `Turma: ${turma || "____"}   ` +
+  `Data: ${dataTxt || "__/__/____"}`;
+
+ctx.fillText(linhaAluno, outer, y);
+
+
+    ctx.restore();
+  }
+
+  // (DAQUI PRA BAIXO você mantém o resto do seu renderFalange igual)
+
 
     // grade
     const lineW = theme.grid.line;
@@ -479,6 +624,21 @@ PAÑUELO</textarea>
     a.href = canvas.toDataURL("image/png");
     a.click();
   }
+function downloadPDF(filename){
+  // jsPDF (UMD) fica em window.jspdf
+  const { jsPDF } = window.jspdf;
+
+  // cria um PDF com o MESMO tamanho do canvas (em "px")
+  const pdf = new jsPDF({
+    orientation: canvas.width >= canvas.height ? "landscape" : "portrait",
+    unit: "px",
+    format: [canvas.width, canvas.height]
+  });
+
+  const imgData = canvas.toDataURL("image/png");
+  pdf.addImage(imgData, "PNG", 0, 0, canvas.width, canvas.height);
+  pdf.save(filename);
+}
 
   // ===== UI wiring =====
   function setSize(w,h){
@@ -502,7 +662,9 @@ PAÑUELO</textarea>
     const theme = THEMES[$("preset").value] || THEMES.CLASSICO;
 
     const numbersOn = $("numbers").value === "ON";
-    const footerText = ($("footer").value || "").trim();
+    const usarBNCC = document.getElementById("usarBNCC")?.checked;
+const footerText = usarBNCC ? ($("footer").value || "").trim() : "";
+
 
     // “outer” inteligente (margem): para A4 300DPI fica bom assim
     const outer = Math.max(80, Math.floor(Math.min(canvas.width, canvas.height) * 0.04));
@@ -530,10 +692,16 @@ PAÑUELO</textarea>
       renderNow(false);
       $("pngCleanBtn").disabled = false;
       $("pngKeyBtn").disabled = false;
+$("pdfCleanBtn").disabled = false;
+$("pdfKeyBtn").disabled = false;
+
     } catch(e){
       log(e.message || String(e));
       $("pngCleanBtn").disabled = true;
       $("pngKeyBtn").disabled = true;
+$("pdfCleanBtn").disabled = true;
+$("pdfKeyBtn").disabled = true;
+
     }
   });
 
@@ -553,6 +721,17 @@ PAÑUELO</textarea>
     renderNow(true);
     downloadPNG(`sopa_${last.rows}x${last.cols}_${$("preset").value}_gabarito.png`);
   });
+$("pdfCleanBtn").addEventListener("click", () => {
+  if (!last) return;
+  renderNow(false);
+  downloadPDF(`sopa_${last.rows}x${last.cols}_${$("preset").value}_limpa.pdf`);
+});
+
+$("pdfKeyBtn").addEventListener("click", () => {
+  if (!last) return;
+  renderNow(true);
+  downloadPDF(`sopa_${last.rows}x${last.cols}_${$("preset").value}_gabarito.pdf`);
+});
 
   // init
   ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height);
